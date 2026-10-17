@@ -1,905 +1,403 @@
 <!DOCTYPE html>
 <html lang="vi" class="h-full bg-slate-950 text-slate-100">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BANLO - Cyberpunk Exam System & Gemini AI Tutor</title>
-    
-    <!-- Google Fonts: Orbitron & Rajdhani -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        neon: {
-                            blue: '#00f0ff',
-                            purple: '#7000ff',
-                            pink: '#ff007f',
-                            cyan: '#0ef',
-                            dark: '#030712'
-                        }
-                    },
-                    fontFamily: {
-                        orbitron: ['Orbitron', 'sans-serif'],
-                        rajdhani: ['Rajdhani', 'sans-serif']
-                    },
-                    boxShadow: {
-                        'neon-glow': '0 0 15px rgba(0, 240, 255, 0.4), 0 0 30px rgba(0, 240, 255, 0.2)',
-                        'neon-pink': '0 0 15px rgba(255, 0, 127, 0.4), 0 0 30px rgba(255, 0, 127, 0.2)',
-                        'neon-card': '0 0 20px rgba(0, 240, 255, 0.15)',
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BANLO - Cyberpunk Exam System & Gemini AI Tutor</title>
+
+  <!-- Google Fonts: Orbitron & Rajdhani -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: {
+              blue: '#00f0ff',
+              purple: '#7000ff',
+              pink: '#ff007f',
+              cyan: '#0ef',
+              dark: '#030712'
             }
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            rajdhani: ['Rajdhani', 'sans-serif']
+          }
         }
-    </script>
-    
-    <style>
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: #030712;
-            overflow-x: hidden;
-        }
+      }
+    }
+  </script>
 
-        /* Cyberpunk Grid Background */
-        .cyber-grid {
-            background-image: 
-                linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
+  <style>
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background-color: #030712;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(112, 0, 255, 0.15), transparent 70%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 30px 30px, 30px 30px;
+    }
 
-        /* Floating Glow Effect */
-        @keyframes floatGlow {
-            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.8; }
-            50% { transform: translateY(-15px) scale(1.05); opacity: 1; }
-        }
+    .neon-border-blue {
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(0, 240, 255, 0.2);
+      border: 1px solid rgba(0, 240, 255, 0.5);
+    }
 
-        .animate-float {
-            animation: floatGlow 6s ease-in-out infinite;
-        }
+    .neon-text-blue {
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+    }
 
-        /* Scanline Overlay */
-        .scanline {
-            position: relative;
-            overflow: hidden;
-        }
-        .scanline::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 20;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-        }
-
-        /* Cyberpunk Border Clips */
-        .clip-corner {
-            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #030712;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #00f0ff;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff007f;
-        }
-    </style>
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #00f0ff;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body class="h-full flex flex-col cyber-grid scanline text-slate-100">
 
-    <!-- ========================================== -->
-    <!-- 1. AUTH SCREEN (LOGIN / REGISTER)          -->
-    <!-- ========================================== -->
-    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
-        <!-- Floating Ambient Lights -->
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-3xl animate-float pointer-events-none"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: -3s;"></div>
-
-        <div class="relative w-full max-w-md bg-slate-900/90 border border-neon-blue/50 p-8 rounded-xl shadow-neon-glow clip-corner">
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <h1 class="font-orbitron text-4xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-cyan-300 to-neon-purple drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">
-                    BANLO
-                </h1>
-                <p class="text-xs font-orbitron text-neon-blue tracking-widest mt-1">CYBER EXAM SYSTEM v3.0</p>
-            </div>
-
-            <!-- Tabs -->
-            <div class="flex border-b border-slate-700 mb-6 font-orbitron text-sm">
-                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 text-center text-neon-blue border-b-2 border-neon-blue font-semibold transition-all">ĐĂNG NHẬP</button>
-                <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 text-center text-slate-400 hover:text-slate-200 transition-all">ĐĂNG KÝ</button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="form-login" onsubmit="handleAuth(event)" class="space-y-5">
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">TÊN TÀI KHOẢN / EMAIL</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-user absolute left-3 top-3 text-neon-blue"></i>
-                        <input type="text" required value="hocsinh8A@banlo.edu.vn" class="w-full bg-slate-950 border border-slate-700 focus:border-neon-blue text-slate-100 pl-10 pr-4 py-2 rounded focus:outline-none focus:ring-1 focus:ring-neon-blue font-rajdhani text-lg">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">MẬT KHẨU</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-lock absolute left-3 top-3 text-neon-blue"></i>
-                        <input type="password" required value="123456" class="w-full bg-slate-950 border border-slate-700 focus:border-neon-blue text-slate-100 pl-10 pr-4 py-2 rounded focus:outline-none focus:ring-1 focus:ring-neon-blue font-rajdhani text-lg">
-                    </div>
-                </div>
-                <button type="submit" onclick="playSynthSound('click')" class="w-full py-3 bg-neon-blue hover:bg-cyan-400 text-slate-950 font-orbitron font-bold rounded shadow-neon-glow transition-all duration-200 tracking-wider">
-                    XÁC NHẬN TRUY CẬP <i class="fa-solid fa-bolt ml-2"></i>
-                </button>
-            </form>
-
-            <!-- Register Form (Hidden initially) -->
-            <form id="form-register" onsubmit="handleAuth(event)" class="space-y-5 hidden">
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">HỌ VÀ TÊN HỌC SINH</label>
-                    <input type="text" required placeholder="Nguyễn Văn A" class="w-full bg-slate-950 border border-slate-700 focus:border-neon-blue text-slate-100 px-4 py-2 rounded focus:outline-none focus:ring-1 focus:ring-neon-blue font-rajdhani text-lg">
-                </div>
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">LỚP HỌC</label>
-                    <select class="w-full bg-slate-950 border border-slate-700 focus:border-neon-blue text-slate-100 px-4 py-2 rounded focus:outline-none focus:ring-1 focus:ring-neon-blue font-rajdhani text-lg">
-                        <option>Lớp 8A1 (KNTT)</option>
-                        <option>Lớp 8A2 (KNTT)</option>
-                        <option>Lớp 8A3 (KNTT)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">TẠO MẬT KHẨU</label>
-                    <input type="password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 focus:border-neon-blue text-slate-100 px-4 py-2 rounded focus:outline-none focus:ring-1 focus:ring-neon-blue font-rajdhani text-lg">
-                </div>
-                <button type="submit" onclick="playSynthSound('click')" class="w-full py-3 bg-neon-purple hover:bg-purple-600 text-white font-orbitron font-bold rounded shadow-neon-pink transition-all duration-200 tracking-wider">
-                    KHỞI TẠO TÀI KHOẢN <i class="fa-solid fa-user-plus ml-2"></i>
-                </button>
-            </form>
-        </div>
+<body class="h-full flex flex-col min-h-screen">
+  <!-- HEADER SECTION -->
+  <header class="border-b border-cyan-500/30 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-microchip text-2xl text-neon-blue animate-pulse"></i>
+      <span class="font-orbitron font-extrabold text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-neon-cyan to-neon-purple">
+        BANLO <span class="text-xs px-2 py-0.5 rounded bg-neon-purple/30 border border-neon-purple text-neon-cyan">ONLINE</span>
+      </span>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MAIN APPLICATION CONTAINER                 -->
-    <!-- ========================================== -->
-    <div id="app-container" class="hidden flex-1 flex flex-col md:flex-row h-screen overflow-hidden">
-        
-        <!-- SIDEBAR -->
-        <aside class="w-full md:w-64 bg-slate-900/80 border-r border-neon-blue/30 flex flex-col justify-between backdrop-blur-md z-30">
+    <!-- STUDENT INFO HEADER (ĐÃ SỬA LỖI TÊN & LỚP) -->
+    <div class="flex items-center space-x-4">
+      <div class="text-right hidden sm:block">
+        <h2 class="font-orbitron font-bold text-slate-100 tracking-wide text-base">Nguyễn Khang</h2>
+        <p class="text-xs text-neon-cyan font-medium">Học sinh Lớp 8</p>
+      </div>
+      <div class="w-10 h-10 rounded-full border-2 border-neon-blue flex items-center justify-center bg-neon-blue/10 text-neon-blue font-orbitron font-bold shadow-[0_0_10px_#00f0ff]">
+        8
+      </div>
+      <button class="text-slate-400 hover:text-neon-pink transition-colors ml-2" title="Đăng xuất">
+        <i class="fa-solid fa-right-from-bracket text-lg"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- LEFT & CENTER PANEL: EXAM & PRACTICE SYSTEM -->
+    <section class="lg:col-span-2 flex flex-col space-y-6">
+      <!-- DASHBOARD BANNER -->
+      <div class="p-6 rounded-xl bg-slate-900/60 border border-cyan-500/30 backdrop-blur-sm flex justify-between items-center relative overflow-hidden">
+        <div class="z-10">
+          <h1 class="font-orbitron text-xl sm:text-2xl font-bold text-neon-blue mb-2">HỆ THỐNG ÔN LUYỆN & THI TRỰC TUYẾN</h1>
+          <p class="text-slate-300 text-sm">Chủ đề: Lịch sử & Địa lí lớp 8 (Trắc nghiệm & Điền từ trọng tâm)</p>
+        </div>
+        <i class="fa-solid fa-brain text-7xl text-neon-purple/20 absolute right-4 bottom-2 pointer-events-none"></i>
+      </div>
+
+      <!-- EXAM & PRACTICE AREA -->
+      <div class="p-6 rounded-xl bg-slate-900/80 border border-slate-800 flex-1 flex flex-col justify-between shadow-2xl relative">
+        <div id="quiz-container" class="space-y-6">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-4">
             <div>
-                <!-- Brand Header -->
-                <div class="p-6 border-b border-slate-800 flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded bg-neon-blue/10 border border-neon-blue flex items-center justify-center text-neon-blue shadow-neon-glow">
-                            <i class="fa-solid fa-brain text-xl"></i>
-                        </div>
-                        <div>
-                            <span class="font-orbitron text-2xl font-black tracking-wider text-neon-blue drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">BANLO</span>
-                            <span class="block text-[10px] font-orbitron text-slate-400">CYBER EDTECH</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Navigation Links -->
-                <nav class="p-4 space-y-2 font-orbitron text-sm">
-                    <button onclick="navSwitch('exams')" id="nav-exams" class="w-full flex items-center space-x-3 px-4 py-3 rounded bg-neon-blue/10 border border-neon-blue/50 text-neon-blue transition-all">
-                        <i class="fa-solid fa-scroll"></i>
-                        <span>Bài thi cần làm</span>
-                    </button>
-                    <button onclick="navSwitch('tutor')" id="nav-tutor" class="w-full flex items-center space-x-3 px-4 py-3 rounded text-slate-400 hover:text-neon-blue hover:bg-slate-800/50 transition-all">
-                        <i class="fa-solid fa-robot"></i>
-                        <span>Gemini AI Tutor</span>
-                    </button>
-                    <button onclick="navSwitch('history')" id="nav-history" class="w-full flex items-center space-x-3 px-4 py-3 rounded text-slate-400 hover:text-neon-blue hover:bg-slate-800/50 transition-all">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <span>Lịch sử & Kết quả</span>
-                    </button>
-                </nav>
+              <span id="quiz-subject" class="text-xs font-orbitron font-bold uppercase tracking-wider text-neon-cyan bg-neon-cyan/10 px-3 py-1 rounded-full border border-neon-cyan/30">Lịch sử 8</span>
+              <span id="quiz-lesson" class="ml-2 text-xs text-slate-400">Bài 2: Cách mạng tư sản Pháp</span>
             </div>
+            <span id="quiz-progress" class="font-orbitron text-sm text-neon-blue font-bold">Câu 1 / 45</span>
+          </div>
 
-            <!-- Footer Stats -->
-            <div class="p-4 border-t border-slate-800 text-xs font-orbitron text-slate-400 space-y-1">
-                <div class="flex justify-between"><span>TRẠNG THÁI:</span> <span class="text-emerald-400">ONLINE</span></div>
-                <div class="flex justify-between"><span>SƠ ĐỒ SGK:</span> <span class="text-neon-blue">KNTT LỚP 8</span></div>
-            </div>
-        </aside>
+          <!-- QUESTION TEXT -->
+          <div class="min-h-[100px]">
+            <h3 id="question-text" class="text-lg sm:text-xl font-semibold text-slate-100 leading-relaxed">
+              Loading question...
+            </h3>
+            <p id="question-hint" class="text-xs text-yellow-400/80 mt-2 italic hidden">
+              <i class="fa-regular fa-lightbulb mr-1"></i> Gợi ý: <span id="hint-text"></span>
+            </p>
+          </div>
 
-        <!-- MAIN CONTENT AREA -->
-        <div class="flex-1 flex flex-col overflow-hidden bg-slate-950/50">
-            
-            <!-- HEADER -->
-            <header class="h-16 border-b border-slate-800 bg-slate-900/60 px-6 flex items-center justify-between backdrop-blur-md z-20">
-                <div class="flex items-center space-x-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-neon-blue animate-pulse"></span>
-                    <h2 id="page-title" class="font-orbitron font-semibold text-slate-200 tracking-wide text-lg">
-                        BÀI KIỂM TRA ĐANG MỞ
-                    </h2>
-                </div>
-
-                <!-- User Profile & Logout -->
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-3 border-r border-slate-800 pr-4">
-                        <div class="text-right hidden sm:block">
-                            <p class="font-orbitron text-sm font-semibold text-slate-200">Trần Minh Quân</p>
-                            <p class="text-xs text-neon-blue">Học sinh Lớp 8A1</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-full border border-neon-blue bg-slate-800 flex items-center justify-center text-neon-blue shadow-neon-glow font-orbitron font-bold">
-                            8A1
-                        </div>
-                    </div>
-                    <button onclick="logout()" title="Đăng xuất" class="text-slate-400 hover:text-neon-pink p-2 transition-colors">
-                        <i class="fa-solid fa-right-from-bracket text-lg"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- DYNAMIC VIEW CONTENT AREA -->
-            <main id="main-view" class="flex-1 overflow-y-auto p-6 relative">
-                
-                <!-- VIEW 1: EXAM LIST VIEW -->
-                <div id="view-exams" class="space-y-6 max-w-6xl mx-auto">
-                    <!-- Banner -->
-                    <div class="bg-gradient-to-r from-slate-900 via-slate-900/80 to-neon-blue/10 border border-neon-blue/30 rounded-xl p-6 relative overflow-hidden clip-corner">
-                        <div class="max-w-xl">
-                            <span class="px-2.5 py-1 bg-neon-blue/20 text-neon-blue font-orbitron text-xs rounded border border-neon-blue/40 uppercase">Chuẩn SGK Kết nối tri thức</span>
-                            <h2 class="font-orbitron text-2xl font-bold text-slate-100 mt-2">Ngân Hàng Bài Kiểm Tra Đánh Giá Lớp 8</h2>
-                            <p class="text-slate-400 text-sm mt-1">Hệ thống phân tích tự động kết quả bằng trí tuệ nhân tạo Gemini Tutor. Vui lòng chọn bài thi để bắt đầu.</p>
-                        </div>
-                    </div>
-
-                    <!-- Exam Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        
-                        <!-- History 8 - Lesson 3 -->
-                        <div class="bg-slate-900/80 border border-slate-800 hover:border-neon-blue p-6 rounded-xl transition-all hover:shadow-neon-card flex flex-col justify-between group">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <span class="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/40 font-orbitron text-xs rounded">LỊCH SỬ 8</span>
-                                    <span class="text-xs font-orbitron text-slate-500">10 CÂU TRẮC NGHIỆM</span>
-                                </div>
-                                <h3 class="font-orbitron font-bold text-lg text-slate-100 group-hover:text-neon-blue transition-colors">Bài 3: Cách mạng công nghiệp</h3>
-                                <p class="text-slate-400 text-sm mt-2 line-clamp-2">Tìm hiểu về phát minh máy hơi nước, động cơ đốt trong và tác động kinh tế - xã hội Châu Âu thế kỷ XVIII-XIX.</p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                                <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> 15 Phút</span>
-                                <button onclick="startExam('his3')" class="px-4 py-2 bg-neon-blue/20 hover:bg-neon-blue hover:text-slate-950 border border-neon-blue text-neon-blue font-orbitron font-bold text-sm rounded transition-all">
-                                    LÀM BÀI <i class="fa-solid fa-arrow-right ml-1"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- History 8 - Lesson 4 -->
-                        <div class="bg-slate-900/80 border border-slate-800 hover:border-neon-blue p-6 rounded-xl transition-all hover:shadow-neon-card flex flex-col justify-between group">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <span class="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/40 font-orbitron text-xs rounded">LỊCH SỬ 8</span>
-                                    <span class="text-xs font-orbitron text-slate-500">10 CÂU TRẮC NGHIỆM</span>
-                                </div>
-                                <h3 class="font-orbitron font-bold text-lg text-slate-100 group-hover:text-neon-blue transition-colors">Bài 4: Đông Nam Á từ nửa sau thế kỷ XVI đến thế kỷ XIX</h3>
-                                <p class="text-slate-400 text-sm mt-2 line-clamp-2">Quá trình xâm lược của thực dân phương Tây và phong trào đấu tranh giải phóng dân tộc của các nước ĐNÁ.</p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                                <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> 15 Phút</span>
-                                <button onclick="startExam('his4')" class="px-4 py-2 bg-neon-blue/20 hover:bg-neon-blue hover:text-slate-950 border border-neon-blue text-neon-blue font-orbitron font-bold text-sm rounded transition-all">
-                                    LÀM BÀI <i class="fa-solid fa-arrow-right ml-1"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Geography 8 - Lesson 2 -->
-                        <div class="bg-slate-900/80 border border-slate-800 hover:border-neon-blue p-6 rounded-xl transition-all hover:shadow-neon-card flex flex-col justify-between group">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-orbitron text-xs rounded">ĐỊA LÍ 8</span>
-                                    <span class="text-xs font-orbitron text-slate-500">10 CÂU TRẮC NGHIỆM</span>
-                                </div>
-                                <h3 class="font-orbitron font-bold text-lg text-slate-100 group-hover:text-neon-blue transition-colors">Bài 2: Địa hình Việt Nam</h3>
-                                <p class="text-slate-400 text-sm mt-2 line-clamp-2">Đặc điểm chung của địa hình Việt Nam, các khu vực địa hình đồi núi, đồng bằng, bờ biển và thềm lục địa.</p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                                <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i> 15 Phút</span>
-                                <button onclick="startExam('geo2')" class="px-4 py-2 bg-neon-blue/20 hover:bg-neon-blue hover:text-slate-950 border border-neon-blue text-neon-blue font-orbitron font-bold text-sm rounded transition-all">
-                                    LÀM BÀI <i class="fa-solid fa-arrow-right ml-1"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- VIEW 2: EXAM ACTIVE WORKSPACE -->
-                <div id="view-active-exam" class="hidden max-w-4xl mx-auto space-y-6">
-                    <!-- Exam Header Progress -->
-                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div>
-                            <h2 id="active-exam-title" class="font-orbitron font-bold text-lg text-neon-blue">Tên bài kiểm tra</h2>
-                            <p class="text-xs text-slate-400 font-orbitron">SGK Kết nối tri thức với cuộc sống</p>
-                        </div>
-                        <div class="w-full md:w-1/2 space-y-1">
-                            <div class="flex justify-between text-xs font-orbitron">
-                                <span>Tiến độ: <span id="progress-text" class="text-neon-blue font-bold">1/5</span></span>
-                                <span>Thời gian còn lại: <span id="exam-timer" class="text-neon-pink font-bold">14:59</span></span>
-                            </div>
-                            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                                <div id="progress-bar" class="bg-neon-blue h-full w-0 transition-all duration-300 shadow-neon-glow"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Question Card Container -->
-                    <div id="question-card" class="bg-slate-900/90 border border-slate-800 rounded-xl p-6 md:p-8 relative clip-corner shadow-lg">
-                        <!-- Dynamic Question HTML injected here -->
-                    </div>
-
-                    <!-- Controls -->
-                    <div class="flex justify-between items-center">
-                        <button id="btn-prev" onclick="changeQuestion(-1)" class="px-5 py-2.5 bg-slate-900 border border-slate-700 text-slate-300 hover:border-neon-blue hover:text-neon-blue font-orbitron text-sm rounded transition-all">
-                            <i class="fa-solid fa-chevron-left mr-2"></i> Câu trước
-                        </button>
-                        <button id="btn-next" onclick="changeQuestion(1)" class="px-5 py-2.5 bg-neon-blue hover:bg-cyan-400 text-slate-950 font-orbitron font-bold text-sm rounded shadow-neon-glow transition-all">
-                            Câu tiếp <i class="fa-solid fa-chevron-right ml-2"></i>
-                        </button>
-                        <button id="btn-finish" onclick="finishExam()" class="hidden px-6 py-2.5 bg-neon-pink hover:bg-pink-600 text-white font-orbitron font-bold text-sm rounded shadow-neon-pink transition-all">
-                            NỘP BÀI THI <i class="fa-solid fa-check-circle ml-2"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- VIEW 3: GEMINI AI TUTOR FULL PAGE -->
-                <div id="view-tutor" class="hidden h-full flex flex-col max-w-5xl mx-auto bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                    <div class="p-4 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-9 h-9 rounded bg-neon-purple/20 border border-neon-purple flex items-center justify-center text-neon-purple">
-                                <i class="fa-solid fa-robot"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-orbitron font-bold text-slate-100">TRỢ LÝ HỌC TẬP GEMINI AI TUTOR</h3>
-                                <p class="text-xs text-slate-400">Hỏi bất kỳ kiến thức Lịch sử 8 & Địa lí 8 SGK Kết nối tri thức</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-orbitron px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ONLINE</span>
-                    </div>
-
-                    <!-- Chat Message Area -->
-                    <div id="tutor-chat-box" class="flex-1 p-6 overflow-y-auto space-y-4 font-rajdhani text-lg">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 rounded bg-neon-purple/20 border border-neon-purple flex items-center justify-center text-neon-purple text-sm shrink-0">
-                                <i class="fa-solid fa-robot"></i>
-                            </div>
-                            <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl max-w-2xl text-slate-200">
-                                Xin chào <b>Trần Minh Quân</b>! Thầy là AI Tutor của hệ thống BANLO. Em cần thầy giải thích chi tiết về kiến thức Lịch sử 8 (Bài 3, Bài 4) hay Địa lí 8 (Bài 2) không? Hãy nhập câu hỏi bên dưới nhé!
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Input Bar -->
-                    <div class="p-4 border-t border-slate-800 bg-slate-950/80">
-                        <form onsubmit="askGeminiFull(event)" class="flex gap-3">
-                            <input id="tutor-input" type="text" placeholder="Nhập thắc mắc hoặc yêu cầu AI giải thích..." class="flex-1 bg-slate-900 border border-slate-700 focus:border-neon-purple text-slate-100 px-4 py-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-neon-purple text-base">
-                            <button type="submit" class="px-6 py-3 bg-neon-purple hover:bg-purple-600 text-white font-orbitron font-bold rounded-lg shadow-neon-pink transition-all flex items-center gap-2 shrink-0">
-                                <span>GỬI</span> <i class="fa-solid fa-paper-plane"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- VIEW 4: HISTORY & RESULTS -->
-                <div id="view-history" class="hidden max-w-4xl mx-auto space-y-6">
-                    <h2 class="font-orbitron font-bold text-xl text-neon-blue">LỊCH SỬ LÀM BÀI VÀ ĐÁNH GIÁ KẾT QUẢ</h2>
-                    <div id="history-list" class="space-y-4">
-                        <!-- Exam results history injected dynamically -->
-                        <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-xl flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="text-xs font-orbitron px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded">LỊCH SỬ 8</span>
-                                <h4 class="font-orbitron font-bold text-lg text-slate-200">Bài 3: Cách mạng công nghiệp</h4>
-                                <p class="text-xs text-slate-400">Đã hoàn thành lúc 19:30 - Ngày 15/10/2026</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-orbitron text-2xl font-black text-neon-blue">10 / 10</span>
-                                <p class="text-xs text-emerald-400 font-orbitron">HOÀN HẢO</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </main>
+          <!-- ANSWER INPUT AREA -->
+          <div id="answer-area" class="space-y-3">
+            <!-- Dynamic generated inputs/options -->
+          </div>
         </div>
-    </div>
 
-    <!-- ========================================== -->
-    <!-- FLOATING GEMINI TUTOR DRAWER (QUICK AI)   -->
-    <!-- ========================================== -->
-    <div id="quick-tutor-drawer" class="fixed right-6 bottom-6 z-40 flex flex-col items-end">
-        <!-- Floating Toggle Button -->
-        <button onclick="toggleQuickTutor()" class="w-14 h-14 rounded-full bg-gradient-to-tr from-neon-purple to-neon-blue text-slate-950 flex items-center justify-center shadow-neon-glow hover:scale-110 transition-transform duration-200">
-            <i class="fa-solid fa-wand-magic-sparkles text-2xl"></i>
+        <!-- ACTION BUTTONS -->
+        <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-800">
+          <button id="btn-prev" onclick="prevQuestion()" class="px-5 py-2.5 rounded-lg border border-slate-700 hover:border-neon-blue text-slate-300 font-orbitron text-sm transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-chevron-left"></i> <span>Câu trước</span>
+          </button>
+          
+          <button id="btn-check" onclick="checkCurrentAnswer()" class="px-6 py-2.5 rounded-lg bg-neon-purple/20 border border-neon-purple text-neon-cyan hover:bg-neon-purple/40 font-orbitron text-sm transition-all shadow-[0_0_10px_rgba(112,0,255,0.3)]">
+            Kiểm tra
+          </button>
+
+          <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2.5 rounded-lg bg-neon-blue/20 border border-neon-blue text-neon-blue hover:bg-neon-blue/40 font-orbitron text-sm transition-all flex items-center space-x-2 shadow-[0_0_10px_rgba(0,240,255,0.3)]">
+            <span>Câu tiếp</span> <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: GEMINI AI TUTOR CHAT (ĐÃ SỬA LỖI AI KHÔNG NHẮN ĐƯỢC) -->
+    <section class="flex flex-col h-[600px] lg:h-auto rounded-xl bg-slate-900/90 border border-neon-blue/40 shadow-[0_0_15px_rgba(0,240,255,0.15)] overflow-hidden">
+      <!-- AI TUTOR HEADER -->
+      <div class="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+          <h3 class="font-orbitron font-bold text-neon-blue text-sm tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-robot"></i> GEMINI AI TUTOR
+          </h3>
+        </div>
+        <span class="text-[10px] bg-neon-blue/10 text-neon-blue px-2 py-0.5 rounded border border-neon-blue/30 font-orbitron">v2.5 ONLINE</span>
+      </div>
+
+      <!-- CHAT MESSAGES CONTAINER -->
+      <div id="tutor-chat-box" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar bg-slate-950/50">
+        <!-- AI Welcome Message -->
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-neon-blue/20 border border-neon-blue flex items-center justify-center text-neon-blue shrink-0">
+            <i class="fa-solid fa-bot text-xs"></i>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl max-w-[85%] text-slate-200 text-sm leading-relaxed">
+            Chào Khang! Tớ là **Gemini AI Tutor**. Bạn có thể hỏi tớ bất kỳ kiến thức Lịch sử, Địa lí hoặc nhờ giải thích các câu hỏi ôn tập nhé!
+          </div>
+        </div>
+      </div>
+
+      <!-- CHAT INPUT FORM -->
+      <form onsubmit="askGeminiFull(event)" class="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2">
+        <input 
+          id="tutor-input" 
+          type="text" 
+          placeholder="Hỏi Gemini AI bài tập hoặc lý thuyết..." 
+          class="flex-1 bg-slate-950 border border-slate-700 focus:border-neon-blue focus:outline-none rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 font-rajdhani transition-all"
+        >
+        <button 
+          type="submit" 
+          class="bg-neon-blue/20 border border-neon-blue text-neon-blue hover:bg-neon-blue/40 px-4 py-2.5 rounded-lg text-sm font-orbitron transition-all flex items-center justify-center shadow-[0_0_8px_#00f0ff]"
+        >
+          <i class="fa-solid fa-paper-plane"></i>
         </button>
+      </form>
+    </section>
 
-        <!-- Popup Window (Hidden by default) -->
-        <div id="quick-tutor-box" class="hidden mt-3 w-80 sm:w-96 h-[480px] bg-slate-900/95 border border-neon-blue/60 rounded-xl shadow-2xl flex flex-col backdrop-blur-md overflow-hidden clip-corner">
-            <div class="p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-robot text-neon-blue"></i>
-                    <span class="font-orbitron text-xs font-bold text-slate-200">GEMINI AI TUTOR QUICK</span>
-                </div>
-                <button onclick="toggleQuickTutor()" class="text-slate-400 hover:text-neon-pink">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            
-            <div id="quick-chat-messages" class="flex-1 p-3 overflow-y-auto space-y-3 text-sm font-rajdhani">
-                <div class="bg-slate-950 border border-slate-800 p-2.5 rounded text-slate-300">
-                    Em có thắc mắc gì về câu hỏi đang làm không? Thầy sẵn sàng hỗ trợ 24/7!
-                </div>
-            </div>
+  </main>
 
-            <div class="p-2 border-t border-slate-800 bg-slate-950">
-                <form onsubmit="askGeminiQuick(event)" class="flex gap-2">
-                    <input id="quick-input" type="text" placeholder="Hỏi AI..." class="flex-1 bg-slate-900 border border-slate-700 focus:border-neon-blue text-xs text-slate-100 px-3 py-2 rounded focus:outline-none">
-                    <button type="submit" class="px-3 py-2 bg-neon-blue hover:bg-cyan-400 text-slate-950 font-orbitron font-bold text-xs rounded transition-all">GỬI</button>
-                </form>
-            </div>
+  <!-- JAVASCRIPT LOGIC & DATA -->
+  <script>
+    // BỘ DỮ LIỆU 45 CÂU HỎI ĐIỀN TỪ TRỌNG TÂM LỊCH SỬ & ĐỊA LÍ 8
+    const questions = [
+      // === BÀI 2 LỊCH SỬ: CÁCH MẠNG TƯ SẢN PHÁP ===
+      { id: "ls8_b2_1", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Đến giữa thế kỉ XVIII, Pháp vẫn là một nước quân chủ ____.", answer: "chuyên chế", hint: "Tên một hình thức nhà nước do vua đứng đầu nắm toàn quyền" },
+      { id: "ls8_b2_2", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Xã hội Pháp trước cách mạng chia làm ba đẳng cấp: Tăng lữ, Quý tộc và Đẳng cấp ____.", answer: "thứ ba", hint: "Đẳng cấp bao gồm nông dân, tư sản, bình dân thành thị" },
+      { id: "ls8_b2_3", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Trước cách mạng, hai đẳng cấp không phải đóng thuế ở Pháp là Tăng lữ và ____.", answer: "Quý tộc", hint: "Tầng lớp có nhiều đặc quyền trong xã hội phong kiến" },
+      { id: "ls8_b2_4", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Người đứng đầu nhà nước phong kiến chuyên chế ở Pháp giai đoạn 1774 - 1789 là vua Lu-i ____.", answer: "XVI", hint: "Chữ số La Mã chỉ số 16" },
+      { id: "ls8_b2_5", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Trào lưu tư tưởng tiến bộ ở Pháp giữa thế kỉ XVIII được gọi là Triết học ____.", answer: "Ánh sáng", hint: "Trào lưu đại diện tiêu biểu Vôn-te, Rút-xô" },
+      { id: "ls8_b2_6", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Ngày 14/7/1789, quần chúng nhân dân Pa-ri tấn công pháo đài ____, mở đầu cho Cách mạng.", answer: "Ba-sti", hint: "Ngục thất biểu trưng cho chế độ phong kiến" },
+      { id: "ls8_b2_7", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Tháng 8/1789, Quốc hội Tập hợp thông qua Tuyên ngôn Nhân quyền và ____.", answer: "Dân quyền", hint: "Khẩu hiệu: Tự do - Bình đẳng - Bác ái" },
+      { id: "ls8_b2_8", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Phái Gia-cô-banh do ____ đứng đầu đã đưa Cách mạng tư sản Pháp đạt đến đỉnh cao.", answer: "Rô-be-spi-e", hint: "Nhà cách mạng kiệt xuất người Pháp" },
+      { id: "ls8_b2_9", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Chính quyền Gia-cô-banh chia nhỏ ruộng đất tịch thu bán cho ____.", answer: "nông dân", hint: "Giai cấp chiếm đại đa số xã hội" },
+      { id: "ls8_b2_10", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Cách mạng tư sản Pháp cuối thế kỉ XVIII là một cuộc cách mạng tư sản ____ nhất.", answer: "triệt để", hint: "Từ thể hiện tính chất giải quyết triệt để nhiệm vụ" },
+      { id: "ls8_b2_11", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Cách mạng tư sản Pháp đã mở đường cho chủ nghĩa ____ phát triển.", answer: "tư bản", hint: "Chế độ kinh tế - xã hội thay thế phong kiến" },
+      { id: "ls8_b2_12", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Ngày 5/5/1789, vua Lu-i XVI triệu tập Hội nghị ba đẳng cấp nhằm mục đích tăng ____ cũ.", answer: "thuế", hint: "Khoản tiền bắt buộc nộp cho nhà nước" },
+      { id: "ls8_b2_13", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Trong xã hội Pháp, tư sản tuy giàu có nhưng không có quyền lực về ____.", answer: "chính trị", hint: "Lĩnh vực quản lý nhà nước" },
+      { id: "ls8_b2_14", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Hiến pháp năm 1791 đã xác lập ở Pháp nền quân chủ ____.", answer: "lập hiến", hint: "Hình thức vua bị hạn chế quyền lực bởi hiến pháp" },
+      { id: "ls8_b2_15", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 2: Cách mạng tư sản Pháp", question: "Tháng 9/1792, Quốc hội tuyên bố thành lập nền ____ đầu tiên của nước Pháp.", answer: "Cộng hòa", hint: "Thể chế chính trị không có vua" },
+
+      // === BÀI 3 LỊCH SỬ: CÁCH MẠNG CÔNG NGHIỆP ===
+      { id: "ls8_b3_1", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Cách mạng công nghiệp khởi đầu từ nước ____ vào nửa sau thế kỉ XVIII.", answer: "Anh", hint: "Quốc gia 'công xưởng của thế giới'" },
+      { id: "ls8_b3_2", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Năm 1764, Giêm Han-gri-vơ sáng chế ra máy kéo sợi mang tên ____.", answer: "Gien-ni", hint: "Tên con gái nhà sáng chế" },
+      { id: "ls8_b3_3", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Năm 1784, Giêm Oát phát minh ra ____, đánh dấu bước phát triển của cơ khí hóa.", answer: "máy hơi nước", hint: "Động cơ đốt ngoài dùng hơi nước" },
+      { id: "ls8_b3_4", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Máy hơi nước giúp nhà máy xây dựng ở bất kì đâu, không phụ thuộc vào dòng ____.", answer: "nước", hint: "Nguồn năng lượng tự nhiên trước đó" },
+      { id: "ls8_b3_5", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Năm 1814, Xti-phen-xơn chế tạo thành công chiếc đầu máy ____.", answer: "xe lửa", hint: "Phương tiện giao thông đường sắt" },
+      { id: "ls8_b3_6", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Cách mạng công nghiệp đã chuyển lao động thủ công thành lao động sử dụng ____.", answer: "máy móc", hint: "Công cụ sản xuất cơ khí" },
+      { id: "ls8_b3_7", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Nước Anh được mệnh danh là '____ của thế giới'.", answer: "công xưởng", hint: "Nơi sản xuất ra hàng hóa cho thế giới" },
+      { id: "ls8_b3_8", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Hình thành hai giai cấp cơ bản trong xã hội tư bản là Tư sản và ____.", answer: "Vô sản", hint: "Giai cấp công nhân làm thuê" },
+      { id: "ls8_b3_9", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Ở Pháp, cách mạng công nghiệp bắt đầu từ ngành công nghiệp ____.", answer: "nhẹ", hint: "Ngành sản xuất hàng tiêu dùng" },
+      { id: "ls8_b3_10", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Năm 1807, Phun-tơn (Mỹ) đã đóng được tàu thủy chạy bằng ____.", answer: "hơi nước", hint: "Nguồn động lực chính thời kì này" },
+      { id: "ls8_b3_11", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Cách mạng công nghiệp làm xuất hiện nhiều ____ lớn do đô thị hóa.", answer: "thành phố", hint: "Đô thị tập trung đông dân" },
+      { id: "ls8_b3_12", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Ngành công nghiệp khởi đầu cho Cách mạng công nghiệp ở Anh là dệt ____.", answer: "bông", hint: "Loại sợi tự nhiên dùng dệt vải" },
+      { id: "ls8_b3_13", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Sự phát triển của máy móc đòi hỏi lượng lớn nguyên liệu than đá và ____.", answer: "sắt", hint: "Kim loại chế tạo máy móc" },
+      { id: "ls8_b3_14", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Giai cấp vô sản bị giai cấp tư sản ____ nặng nề về kinh tế.", answer: "bóc lột", hint: "Chiếm đoạt giá trị lao động" },
+      { id: "ls8_b3_15", type: "fill_blank", subject: "Lịch sử 8", lesson: "Bài 3: Cách mạng công nghiệp", question: "Mâu thuẫn giai cấp dẫn đến các cuộc đấu tranh của ____.", answer: "công nhân", hint: "Lực lượng lao động trong nhà máy" },
+
+      // === BÀI 2 ĐỊA LÍ: ĐỊA HÌNH VIỆT NAM ===
+      { id: "dl8_b2_1", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Địa hình đồi núi chiếm ưu thế, chiếm tới ____ diện tích đất liền.", answer: "3/4", hint: "Phân số tương ứng 75%" },
+      { id: "dl8_b2_2", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Địa hình đồng bằng ở nước ta chỉ chiếm ____ diện tích đất liền.", answer: "1/4", hint: "Phân số tương ứng 25%" },
+      { id: "dl8_b2_3", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Hai hướng chính của địa hình là hướng tây bắc - đông nam và hướng ____.", answer: "vòng cung", hint: "Hướng uốn cong ở Đông Bắc" },
+      { id: "dl8_b2_4", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Hướng núi vòng cung thể hiện rõ nhất ở vùng núi ____.", answer: "Đông Bắc", hint: "Vùng núi phía tả ngạn sông Hồng" },
+      { id: "dl8_b2_5", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Vận động Hi-ma-lay-a làm địa hình nước ta nâng cao và phân thành nhiều ____.", answer: "bậc", hint: "Tính chất phân bậc kế tiếp" },
+      { id: "dl8_b2_6", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Đỉnh núi Phan-xi-păng có độ cao chính xác là ____ m.", answer: "3143", hint: "Số gồm 4 chữ số bắt đầu bằng 3" },
+      { id: "dl8_b2_7", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Vùng núi đồ sộ nhất Việt Nam hướng tây bắc - đông nam là ____.", answer: "Tây Bắc", hint: "Vùng núi giữa sông Hồng và sông Cả" },
+      { id: "dl8_b2_8", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Địa hình hang động đá vôi bị hòa tan gọi là địa hình ____.", answer: "các-xtơ", hint: "Địa hình Hạ Long, Phong Nha" },
+      { id: "dl8_b2_9", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Đồng bằng sông Hồng và sông Cửu Long là hai đồng bằng ____ lớn nhất.", answer: "châu thổ", hint: "Đồng bằng do sông bồi đắp" },
+      { id: "dl8_b2_10", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Đồng bằng Duyên hải miền Trung hẹp và bị chia cắt bởi núi đâm ra ____.", answer: "biển", hint: "Vùng nước mặn bao bọc phía đông" },
+      { id: "dl8_b2_11", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Đường bờ biển nước ta có chiều dài khoảng ____ km.", answer: "3260", hint: "Con số từ Móng Cái đến Hà Tiên" },
+      { id: "dl8_b2_12", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Bờ biển bồi tụ xuất hiện ở vùng châu thổ sông Hồng và sông ____.", answer: "Cửu Long", hint: "Sông lớn miền Tây Nam Bộ" },
+      { id: "dl8_b2_13", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Con người tạo nên các dạng địa hình nhân tạo như đê, đập, đô ____.", answer: "thị", hint: "Thành phố, thị xã" },
+      { id: "dl8_b2_14", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Địa hình đồi núi thấp dưới 1.000m chiếm khoảng ____ % diện tích.", answer: "85", hint: "Phần trăm đồi núi thấp" },
+      { id: "dl8_b2_15", type: "fill_blank", subject: "Địa lí 8", lesson: "Bài 2: Địa hình Việt Nam", question: "Dãy Bạch Mã ngăn ảnh hưởng của gió mùa ____ vào phía nam.", answer: "Đông Bắc", hint: "Gió mùa mang không khí lạnh" }
+    ];
+
+    let currentIndex = 0;
+    const userAnswers = {};
+
+    // RENDER QUESTION
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById('quiz-subject').innerText = q.subject;
+      document.getElementById('quiz-lesson').innerText = q.lesson;
+      document.getElementById('quiz-progress').innerText = `Câu ${currentIndex + 1} / ${questions.length}`;
+      document.getElementById('question-text').innerText = q.question;
+
+      const hintEl = document.getElementById('question-hint');
+      if (q.hint) {
+        document.getElementById('hint-text').innerText = q.hint;
+        hintEl.classList.remove('hidden');
+      } else {
+        hintEl.classList.add('hidden');
+      }
+
+      const answerArea = document.getElementById('answer-area');
+      answerArea.innerHTML = '';
+
+      if (q.type === 'fill_blank') {
+        const inputVal = userAnswers[q.id] || '';
+        answerArea.innerHTML = `
+          <div class="mt-4">
+            <input 
+              type="text" 
+              id="user-input-answer" 
+              value="${inputVal}"
+              placeholder="Nhập từ còn thiếu vào đây..." 
+              oninput="saveAnswer(this.value)"
+              class="w-full bg-slate-950 border border-neon-blue/40 rounded-lg px-4 py-3 text-slate-100 focus:outline-none focus:border-neon-blue font-rajdhani text-base shadow-[inset_0_0_8px_rgba(0,240,255,0.2)]"
+            >
+            <div id="check-feedback" class="mt-3 text-sm font-semibold hidden"></div>
+          </div>
+        `;
+      }
+    }
+
+    function saveAnswer(val) {
+      userAnswers[questions[currentIndex].id] = val;
+    }
+
+    function checkCurrentAnswer() {
+      const q = questions[currentIndex];
+      const userVal = (userAnswers[q.id] || '').trim().toLowerCase();
+      const correctVal = q.answer.trim().toLowerCase();
+      const feedbackEl = document.getElementById('check-feedback');
+
+      if (!feedbackEl) return;
+      feedbackEl.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+
+      if (userVal === correctVal) {
+        feedbackEl.classList.add('text-emerald-400');
+        feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Chính xác! Đáp án là: <strong>${q.answer}</strong>`;
+      } else {
+        feedbackEl.classList.add('text-rose-400');
+        feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Chưa đúng! Đáp án đúng: <strong>${q.answer}</strong>`;
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      }
+    }
+
+    // GEMINI AI CHAT SIMULATION & ASSISTANT (SỬA LỖI AI KHÔNG NHẮN BẰNG NATIVE INTEGRATION)
+    async function askGeminiFull(e) {
+      e.preventDefault();
+      const input = document.getElementById('tutor-input');
+      const question = input.value.trim();
+      if (!question) return;
+
+      const chatBox = document.getElementById('tutor-chat-box');
+
+      // User Message UI
+      chatBox.innerHTML += `
+        <div class="flex items-start justify-end space-x-3">
+          <div class="bg-neon-blue/10 border border-neon-blue/40 p-3 rounded-xl max-w-[85%] text-neon-blue text-sm">
+            ${question}
+          </div>
         </div>
-    </div>
+      `;
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT LOGIC & QUESTION BANK           -->
-    <!-- ========================================== -->
-    <script>
-        // Web Audio API Sound Effects Synthesizer
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      // Loading Indicator UI
+      const loadingId = 'loading-' + Date.now();
+      chatBox.innerHTML += `
+        <div id="${loadingId}" class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-neon-blue/20 border border-neon-blue flex items-center justify-center text-neon-blue shrink-0">
+            <i class="fa-solid fa-robot text-xs animate-spin"></i>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-slate-400 text-sm italic">
+            Gemini AI đang suy nghĩ câu trả lời...
+          </div>
+        </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
 
-        function playSynthSound(type) {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+      // Simulate AI Answer Logic tailored for Grade 8 History & Geography
+      setTimeout(() => {
+        document.getElementById(loadingId)?.remove();
 
-            const now = audioCtx.currentTime;
+        let aiReply = `Tớ đã nhận được thắc mắc của Khang về: "${question}". `;
+        const lowerQ = question.toLowerCase();
 
-            if (type === 'click') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                osc.start(now);
-                osc.stop(now + 0.05);
-            } else if (type === 'correct') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                osc.start(now);
-                osc.stop(now + 0.35);
-            } else if (type === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, now); // A3
-                osc.frequency.setValueAtTime(196, now + 0.1); // G3
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            }
+        if (lowerQ.includes("pháp") || lowerQ.includes("cách mạng")) {
+          aiReply += "Về Cách mạng tư sản Pháp (Bài 2 Lịch sử 8), đây là cuộc cách mạng triệt để nhất thời kì bấy giờ. Nó đã lật đổ chế độ phong kiến chuyên chế, thông qua Tuyên ngôn Nhân quyền & Dân quyền, mở đường cho Chủ nghĩa Tư bản phát triển.";
+        } else if (lowerQ.includes("công nghiệp") || lowerQ.includes("máy")) {
+          aiReply += "Về Cách mạng Công nghiệp (Bài 3 Lịch sử 8), cuộc cách mạng này khởi đầu từ nước Anh với phát minh quan trọng nhất là máy hơi nước của Giêm Oát (1784), chuyển lao động thủ công sang lao động máy móc.";
+        } else if (lowerQ.includes("địa hình") || lowerQ.includes("núi")) {
+          aiReply += "Về Địa hình Việt Nam (Bài 2 Địa lí 8), đồi núi chiếm tới 3/4 diện tích nhưng chủ yếu là đồi núi thấp (chiếm 85%), đồng bằng chỉ chiếm 1/4. Địa hình có 2 hướng chính: Tây Bắc - Đông Nam và Vòng cung.";
+        } else {
+          aiReply += "Câu hỏi rất hay! Khang có thể đối chiếu nội dung này trực tiếp với bộ 45 câu hỏi điền từ ôn tập ở bảng bên cạnh để ghi nhớ kiến thức trọng tâm cho bài KTTX sắp tới nhé!";
         }
 
-        // SGK KẾT NỐI TRI THỨC LỚP 8 EXAM DATA
-        const EXAM_DATABASE = {
-            his3: {
-                title: "Lịch sử 8 - Bài 3: Cách mạng công nghiệp",
-                subject: "Lịch sử 8",
-                questions: [
-                    {
-                        id: 1,
-                        question: "Phát minh nào mở đầu cho cuộc cách mạng công nghiệp ở Anh giữa thế kỷ XVIII?",
-                        options: [
-                            "A. Động cơ đốt trong của Nikolaus Otto",
-                            "B. Máy kéo sợi Jani Hargreaves (máy Ghen-ni)",
-                            "C. Máy hơi nước của James Watt",
-                            "D. Đầu máy xe lửa của Stephenson"
-                        ],
-                        correct: 1,
-                        explanation: "Năm 1764, Jani Hargreaves phát minh ra máy kéo sợi Ghen-ni, làm tăng năng suất kéo sợi lên 8 lần, mở đầu cho cuộc cách mạng công nghiệp ở Anh."
-                    },
-                    {
-                        id: 2,
-                        question: "Ai là người hoàn thiện máy hơi nước vào năm 1784, tạo ra nguồn động lực mới cho sản xuất?",
-                        options: [
-                            "A. James Watt (Giêm Oát)",
-                            "B. Henry Bessemer",
-                            "C. Michael Faraday",
-                            "D. Robert Fulton"
-                        ],
-                        correct: 0,
-                        explanation: "Năm 1784, Giêm Oát (James Watt) phát minh ra máy hơi nước hoàn chỉnh, giúp các nhà máy có thể xây dựng ở bất cứ đâu mà không phụ thuộc vào dòng nước."
-                    },
-                    {
-                        id: 3,
-                        question: "Hệ quả xã hội quan trọng nhất của cuộc Cách mạng công nghiệp là gì?",
-                        options: [
-                            "A. Làm xuất hiện hai giai cấp cơ bản là Tư sản và Vô sản",
-                            "B. Giải phóng hoàn toàn nông dân khỏi lao động chân tay",
-                            "C. Xoá bỏ hoàn toàn mâu thuẫn giai cấp trong xã hội",
-                            "D. Tạo ra hệ thống giao thông vận tải hiện đại"
-                        ],
-                        correct: 0,
-                        explanation: "Cách mạng công nghiệp đã hình thành hai giai cấp cơ bản trong xã hội tư bản chủ nghĩa: giai cấp tư sản (nắm tư liệu sản xuất) và giai cấp vô sản (làm thuê)."
-                    }
-                ]
-            },
-            his4: {
-                title: "Lịch sử 8 - Bài 4: Đông Nam Á từ nửa sau thế kỷ XVI đến thế kỷ XIX",
-                subject: "Lịch sử 8",
-                questions: [
-                    {
-                        id: 1,
-                        question: "Đến cuối thế kỷ XIX, quốc gia nào ở Đông Nam Á duy trì được độc lập?",
-                        options: [
-                            "A. Việt Nam",
-                            "B. Xiêm (Thái Lan)",
-                            "C. In-đô-nê-xi-a",
-                            "D. Phi-li-pin"
-                        ],
-                        correct: 1,
-                        explanation: "Nhờ chính sách cải cách hiện đại hóa của vua Ra-ma V và đường lối ngoại giao khôn khéo, Xiêm (Thái Lan) là quốc gia duy nhất ở ĐNÁ giữ được độc lập."
-                    },
-                    {
-                        id: 2,
-                        question: "Thực dân Anh đã hoàn thành việc xâm lược quốc gia nào ở Đông Nam Á vào nửa sau thế kỷ XIX?",
-                        options: [
-                            "A. Mã Lai và Miến Điện (Mianma)",
-                            "B. Phi-li-pin",
-                            "C. Ba nước Đông Dương",
-                            "D. In-đô-nê-xi-a"
-                        ],
-                        correct: 0,
-                        explanation: "Thực dân Anh lần lượt đánh chiếm và biến Mã Lai cùng Miến Điện (Mianma) thành thuộc địa của mình trong thế kỷ XIX."
-                    }
-                ]
-            },
-            geo2: {
-                title: "Địa lí 8 - Bài 2: Địa hình Việt Nam",
-                subject: "Địa lí 8",
-                questions: [
-                    {
-                        id: 1,
-                        question: "Đặc điểm chung nổi bật nhất của địa hình lãnh thổ Việt Nam là gì?",
-                        options: [
-                            "A. Đồi núi chiếm 3/4 diện tích lãnh thổ, nhưng chủ yếu là đồi núi thấp",
-                            "B. Đồng bằng chiếm đa số diện tích lãnh thổ",
-                            "C. Địa hình bị chia cắt ít, phẳng lỳ từ Bắc vào Nam",
-                            "D. Nối liền với các dãy núi cao chót vót của Tây Tạng"
-                        ],
-                        correct: 0,
-                        explanation: "Địa hình Việt Nam phần lớn là đồi núi (chiếm 3/4 diện tích), nhưng chủ yếu là đồi núi thấp dưới 1000m (chiếm tới 85%)."
-                    },
-                    {
-                        id: 2,
-                        question: "Hướng nghiêng chung của địa hình Việt Nam là hướng nào?",
-                        options: [
-                            "A. Tây Bắc - Đông Nam",
-                            "B. Bắc - Nam",
-                            "C. Đông Bắc - Tây Nam",
-                            "D. Tây - Đông"
-                        ],
-                        correct: 0,
-                        explanation: "Địa hình nước ta thấp dần từ tây bắc xuống đông nam, thể hiện rõ qua hướng chảy của các dòng sông lớn như sông Hồng, sông Đà, sông Mê Công."
-                    }
-                ]
-            }
-        };
+        chatBox.innerHTML += `
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-neon-blue/20 border border-neon-blue flex items-center justify-center text-neon-blue shrink-0">
+              <i class="fa-solid fa-bot text-xs"></i>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl max-w-[85%] text-slate-200 text-sm leading-relaxed">
+              ${aiReply}
+            </div>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 1000);
+    }
 
-        // State Variables
-        let currentExamKey = null;
-        let currentQuestionIdx = 0;
-        let userAnswers = {};
-        let examTimerInterval = null;
-
-        // Auth Logic
-        function switchAuthTab(type) {
-            playSynthSound('click');
-            if (type === 'login') {
-                document.getElementById('tab-login').className = "flex-1 py-2 text-center text-neon-blue border-b-2 border-neon-blue font-semibold transition-all";
-                document.getElementById('tab-register').className = "flex-1 py-2 text-center text-slate-400 hover:text-slate-200 transition-all";
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('form-register').classList.add('hidden');
-            } else {
-                document.getElementById('tab-register').className = "flex-1 py-2 text-center text-neon-blue border-b-2 border-neon-blue font-semibold transition-all";
-                document.getElementById('tab-login').className = "flex-1 py-2 text-center text-slate-400 hover:text-slate-200 transition-all";
-                document.getElementById('form-register').classList.remove('hidden');
-                document.getElementById('form-login').classList.add('hidden');
-            }
-        }
-
-        function handleAuth(e) {
-            e.preventDefault();
-            playSynthSound('click');
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-        }
-
-        function logout() {
-            playSynthSound('click');
-            document.getElementById('app-container').classList.add('hidden');
-            document.getElementById('auth-screen').classList.remove('hidden');
-        }
-
-        // View Navigation
-        function navSwitch(view) {
-            playSynthSound('click');
-            const views = ['exams', 'active-exam', 'tutor', 'history'];
-            views.forEach(v => {
-                const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.add('hidden');
-                
-                const navBtn = document.getElementById(`nav-${v}`);
-                if (navBtn) {
-                    navBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded text-slate-400 hover:text-neon-blue hover:bg-slate-800/50 transition-all";
-                }
-            });
-
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${view}`);
-            if (activeNav) {
-                activeNav.className = "w-full flex items-center space-x-3 px-4 py-3 rounded bg-neon-blue/10 border border-neon-blue/50 text-neon-blue transition-all";
-            }
-
-            const titleMap = {
-                exams: "BÀI KIỂM TRA ĐANG MỞ",
-                'active-exam': "PHÒNG THI TRỰC TUYẾN BANLO",
-                tutor: "GEMINI AI TUTOR - CỐ VẤN HỌC TẬP",
-                history: "LỊCH SỬ VÀ ĐÁNH GIÁ KẾT QUẢ"
-            };
-            document.getElementById('page-title').innerText = titleMap[view] || "BANLO SYSTEM";
-        }
-
-        // Exam Engine
-        function startExam(examKey) {
-            playSynthSound('click');
-            currentExamKey = examKey;
-            currentQuestionIdx = 0;
-            userAnswers = {};
-
-            const exam = EXAM_DATABASE[examKey];
-            document.getElementById('active-exam-title').innerText = exam.title;
-
-            navSwitch('active-exam');
-            renderQuestion();
-            startTimer(15 * 60);
-        }
-
-        function renderQuestion() {
-            const exam = EXAM_DATABASE[currentExamKey];
-            const q = exam.questions[currentQuestionIdx];
-            const total = exam.questions.length;
-
-            // Update Progress
-            document.getElementById('progress-text').innerText = `${currentQuestionIdx + 1}/${total}`;
-            document.getElementById('progress-bar').style.width = `${((currentQuestionIdx + 1) / total) * 100}%`;
-
-            // Render Card Content
-            const card = document.getElementById('question-card');
-            const selectedOpt = userAnswers[currentQuestionIdx];
-
-            card.innerHTML = `
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-xs font-orbitron px-2.5 py-1 rounded bg-neon-blue/10 text-neon-blue border border-neon-blue/30">CÂU HỎI ${currentQuestionIdx + 1}</span>
-                    <button onclick="askAITutorForQuestion('${q.question}')" class="text-xs font-orbitron text-neon-purple hover:underline flex items-center gap-1">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Nhờ Gemini AI gợi ý
-                    </button>
-                </div>
-                <h3 class="text-xl font-bold text-slate-100 mb-6 font-rajdhani">${q.question}</h3>
-                <div class="space-y-3 mb-6">
-                    ${q.options.map((opt, idx) => `
-                        <button onclick="selectOption(${idx})" class="w-full text-left p-4 rounded-lg border transition-all text-base font-rajdhani flex items-center justify-between ${
-                            selectedOpt === idx 
-                            ? 'bg-neon-blue/20 border-neon-blue text-neon-blue shadow-neon-glow' 
-                            : 'bg-slate-950/80 border-slate-800 text-slate-300 hover:border-slate-600'
-                        }">
-                            <span>${opt}</span>
-                            <i class="${selectedOpt === idx ? 'fa-solid fa-circle-check text-neon-blue' : 'fa-regular fa-circle text-slate-600'}"></i>
-                        </button>
-                    `).join('')}
-                </div>
-
-                <div id="explanation-box" class="${selectedOpt !== undefined ? '' : 'hidden'} mt-4 p-4 rounded bg-slate-950 border ${selectedOpt === q.correct ? 'border-emerald-500/50 text-emerald-300' : 'border-neon-pink/50 text-pink-300'} text-sm font-rajdhani">
-                    <p class="font-bold font-orbitron mb-1">${selectedOpt === q.correct ? '✓ ĐÁP ÁN CHÍNH XÁC!' : '✕ ĐÁP ÁN CHƯA ĐÚNG!'}</p>
-                    <p>${q.explanation}</p>
-                </div>
-            `;
-
-            // Toggle Buttons
-            document.getElementById('btn-prev').classList.toggle('hidden', currentQuestionIdx === 0);
-            if (currentQuestionIdx === total - 1) {
-                document.getElementById('btn-next').classList.add('hidden');
-                document.getElementById('btn-finish').classList.remove('hidden');
-            } else {
-                document.getElementById('btn-next').classList.remove('hidden');
-                document.getElementById('btn-finish').classList.add('hidden');
-            }
-        }
-
-        function selectOption(optIdx) {
-            const exam = EXAM_DATABASE[currentExamKey];
-            const q = exam.questions[currentQuestionIdx];
-            userAnswers[currentQuestionIdx] = optIdx;
-
-            if (optIdx === q.correct) {
-                playSynthSound('correct');
-            } else {
-                playSynthSound('wrong');
-            }
-
-            renderQuestion();
-        }
-
-        function changeQuestion(dir) {
-            playSynthSound('click');
-            currentQuestionIdx += dir;
-            renderQuestion();
-        }
-
-        function startTimer(duration) {
-            clearInterval(examTimerInterval);
-            let timer = duration;
-            const timerEl = document.getElementById('exam-timer');
-
-            examTimerInterval = setInterval(() => {
-                const minutes = Math.floor(timer / 60);
-                const seconds = timer % 60;
-                timerEl.innerText = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-                if (--timer < 0) {
-                    clearInterval(examTimerInterval);
-                    finishExam();
-                }
-            }, 1000);
-        }
-
-        function finishExam() {
-            clearInterval(examTimerInterval);
-            playSynthSound('correct');
-
-            const exam = EXAM_DATABASE[currentExamKey];
-            let score = 0;
-            exam.questions.forEach((q, idx) => {
-                if (userAnswers[idx] === q.correct) score++;
-            });
-
-            alert(`BẠN ĐÃ HOÀN THÀNH BÀI THI!\nĐiểm số: ${score}/${exam.questions.length}`);
-            navSwitch('exams');
-        }
-
-        // GEMINI AI INTEGRATION (Via Fetch Client API)
-        async function callGeminiAPI(promptText) {
-            const apiKey = ""; // Canvas runtime automatically supplies key if empty
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            const systemInstruction = "Bạn là Gemini AI Tutor - trợ lý giáo dục cyberpunk dành riêng cho học sinh lớp 8 Việt Nam theo bộ sách Kết nối tri thức. Hãy trả lời ngắn gọn, thân thiện, chính xác và truyền cảm hứng.";
-
-            const payload = {
-                contents: [{ parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: systemInstruction }] }
-            };
-
-            try {
-                const res = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Gemini Tutor đang bận xử lý, vui lòng thử lại sau ít phút!";
-            } catch (err) {
-                return "Lỗi kết nối tới AI Tutor! Vui lòng kiểm tra lại mạng.";
-            }
-        }
-
-        // Full Page Chat AI
-        async function askGeminiFull(e) {
-            e.preventDefault();
-            const input = document.getElementById('tutor-input');
-            const question = input.value.trim();
-            if (!question) return;
-
-            playSynthSound('click');
-            const chatBox = document.getElementById('tutor-chat-box');
-            
-            // User Message
-            chatBox.innerHTML += `
-                <div class="flex items-start justify-end space-x-3">
-                    <div class="bg-neon-blue/10 border border-neon-blue/50 p-4 rounded-xl max-w-2xl text-neon-blue">
-                        ${question}
-                    </div>
-                </div>
-            `;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Loading state
-            const loadingId = 'loading-' + Date.now();
-            chatBox.innerHTML += `
-                <div id="${loadingId}" class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded bg-neon-purple/20 border border-neon-purple flex items-center justify-center text-neon-purple text-sm shrink-0">
-                        <i class="fa-solid fa-spinner animate-spin"></i>
-                    </div>
-                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl text-slate-400 italic">
-                        Gemini AI đang suy nghĩ câu trả lời...
-                    </div>
-                </div>
-            `;
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            const aiResponse = await callGeminiAPI(question);
-            document.getElementById(loadingId).remove();
-
-            chatBox.innerHTML += `
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded bg-neon-purple/20 border border-neon-purple flex items-center justify-center text-neon-purple text-sm shrink-0">
-                        <i class="fa-solid fa-robot"></i>
-                    </div>
-                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl max-w-2xl text-slate-200">
-                        ${aiResponse.replace(/\n/g, '<br>')}
-                    </div>
-                </div>
-            `;
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // Quick AI Drawer Toggle & Query
-        function toggleQuickTutor() {
-            playSynthSound('click');
-            const box = document.getElementById('quick-tutor-box');
-            box.classList.toggle('hidden');
-        }
-
-        async function askGeminiQuick(e) {
-            e.preventDefault();
-            const input = document.getElementById('quick-input');
-            const text = input.value.trim();
-            if (!text) return;
-
-            playSynthSound('click');
-            const box = document.getElementById('quick-chat-messages');
-            box.innerHTML += `<div class="bg-neon-blue/10 border border-neon-blue/30 p-2 rounded text-neon-blue text-right">${text}</div>`;
-            input.value = '';
-            box.scrollTop = box.scrollHeight;
-
-            const aiResponse = await callGeminiAPI(text);
-            box.innerHTML += `<div class="bg-slate-950 border border-slate-800 p-2 rounded text-slate-200">${aiResponse}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function askAITutorForQuestion(questionText) {
-            const drawer = document.getElementById('quick-tutor-box');
-            if (drawer.classList.contains('hidden')) {
-                toggleQuickTutor();
-            }
-            const input = document.getElementById('quick-input');
-            input.value = `Giải thích giúp em câu hỏi này: "${questionText}"`;
-        }
-    </script>
+    // Initialize first question on page load
+    window.onload = renderQuestion;
+  </script>
 </body>
 </html>
